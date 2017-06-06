@@ -1,8 +1,7 @@
 package com.sigfox.seminar
 
-import com.sigfox.seminar.ListSample.{intList, stringList}
-
 import scala.annotation.tailrec
+
 
 /**
   *
@@ -11,7 +10,9 @@ sealed trait List[+A] {
 
 }
 
-object Nil extends List[Nothing]
+object Nil extends List[Nothing] {
+  override def toString: String = "Nil"
+}
 
 case class Cons[+A](head: A, tail: List[A]) extends List[A]
 
@@ -91,6 +92,7 @@ object MoreFoldingOperations {
 
   def reverse[A](list: List[A]): List[A] = MoreFoldingOperations.foldLeft[A,List[A]](list, Nil){ (acc, in) => Cons(in, acc)}
 
+  @tailrec
   def foldLeft[A, B](list: List[A], z: B)(f: (B, A) => B): B = list match {
     case Nil => z
     case Cons(head, tail) => foldLeft(tail, f(z, head))(f)
@@ -105,11 +107,11 @@ object MoreFoldingOperations {
   }
 
 
-  def sum(list: List[Int]) = foldLeft(list, 0)((acc, in) => acc + in) // order does not matter, + is commutative ie a + b === b + a
+  def sum(list: List[Int]): Int = foldLeft(list, 0)((acc, in) => acc + in) // order does not matter, + is commutative ie a + b === b + a
 
-  def product(list: List[Int]) = foldLeft(list, 1)((acc, in) => acc * in) // order does not matter, * is commutative ie a * b === b * a
+  def product(list: List[Int]): Int = foldLeft(list, 1)((acc, in) => acc * in) // order does not matter, * is commutative ie a * b === b * a
 
-  def concat(list: List[String]) = foldLeft(list, "")((acc, in) => acc + in) // + is not commutative for String "ab" + "cd" =!= "cd" + "ab"
+  def concat(list: List[String]): String = foldLeft(list, "")((acc, in) => acc + in) // + is not commutative for String "ab" + "cd" =!= "cd" + "ab"
 
 
 }
@@ -119,16 +121,33 @@ object ModifyingOperations {
   // Using folds
   def foldRightAdd3(list: List[Int]): List[Int] = MoreFoldingOperations.foldRight[Int, List[Int]](list, Nil)((in, acc) => Cons(in + 3, acc))
 
-
+  def map[A,B](list: List[A])(f: A => B): List[B] = MoreFoldingOperations.foldRight(list, Nil: List[B]){(in, acc) =>
+    Cons(f(in), acc)
+  }
 
 }
 
 object MappingInAction extends App {
 
+  // Defining a plus function
+  val plus: (Int, Int) => Int = (a, b) => a + b
+
+  val add3 = plus.curried(3)
+  val add4 = plus.curried(4)
+
   val intList: List[Int] = Cons(3, Cons(2, Cons(5, Nil)))
   println(intList)
-  println(MoreFoldingOperations.reverse(intList))
-  println(ModifyingOperations.foldRightAdd3(intList))
+
+
+  // val added3: List[Int] = ModifyingOperations.map(intList)(i => i + 3)
+  val added3: List[Int] = ModifyingOperations.map(intList)(add3)
+
+  println(added3)
+  println(intList)
+
+  println()
+  val added4: List[Int] = ModifyingOperations.map(intList)(add4)
+  println(added4)
 
 }
 
