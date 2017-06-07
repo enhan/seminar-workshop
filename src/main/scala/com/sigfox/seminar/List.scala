@@ -66,9 +66,13 @@ object FoldingOperations {
     acc + in
   }
 
-  def product(list: List[Int]): Int = foldRight(list, 1){ (in, acc) => acc * in}
+  def product(list: List[Int]): Int = foldRight(list, 1){
+    (in, acc) => acc * in
+  }
 
-  def concat(list: List[String]): String = foldRight(list, ""){(in, acc) =>  in + acc} // Order is important :)
+  def concat(list: List[String]): String = foldRight(list, ""){
+    (in, acc) =>  in + acc // Order is important :)
+  }
 
 }
 
@@ -90,7 +94,10 @@ object FoldingInAction extends App {
 
 object MoreFoldingOperations {
 
-  def reverse[A](list: List[A]): List[A] = MoreFoldingOperations.foldLeft[A,List[A]](list, Nil){ (acc, in) => Cons(in, acc)}
+  def reverse[A](list: List[A]): List[A] =
+    MoreFoldingOperations.foldLeft[A,List[A]](list, Nil){
+      (acc, in) => Cons(in, acc)
+    }
 
   @tailrec
   def foldLeft[A, B](list: List[A], z: B)(f: (B, A) => B): B = list match {
@@ -107,24 +114,31 @@ object MoreFoldingOperations {
   }
 
 
-  def sum(list: List[Int]): Int = foldLeft(list, 0)((acc, in) => acc + in) // order does not matter, + is commutative ie a + b === b + a
+  def sum(list: List[Int]): Int = foldLeft(list, 0){
+    (acc, in) => acc + in
+  } // order does not matter, + is commutative ie a + b === b + a
 
-  def product(list: List[Int]): Int = foldLeft(list, 1)((acc, in) => acc * in) // order does not matter, * is commutative ie a * b === b * a
+  def product(list: List[Int]): Int = foldLeft(list, 1){
+    (acc, in) => acc * in
+  } // order does not matter, * is commutative ie a * b === b * a
 
-  def concat(list: List[String]): String = foldLeft(list, "")((acc, in) => acc + in) // + is not commutative for String "ab" + "cd" =!= "cd" + "ab"
-
-
+  def concat(list: List[String]): String = foldLeft(list, ""){
+    (acc, in) => acc + in
+  } // + is not commutative for String "ab" + "cd" =!= "cd" + "ab"
 }
 
 object ModifyingOperations {
 
   // Using folds
-  def foldRightAdd3(list: List[Int]): List[Int] = MoreFoldingOperations.foldRight[Int, List[Int]](list, Nil)((in, acc) => Cons(in + 3, acc))
+  def foldRightAdd3(list: List[Int]): List[Int] =
+    MoreFoldingOperations.foldRight(list, Nil: List[Int]){
+      (in, acc) => Cons(in + 3, acc)
+    }
 
-  def map[A,B](list: List[A])(f: A => B): List[B] = MoreFoldingOperations.foldRight(list, Nil: List[B]){(in, acc) =>
-    Cons(f(in), acc)
+  def map[A,B](list: List[A])(f: A => B): List[B] =
+    MoreFoldingOperations.foldRight(list, Nil: List[B]){
+    (in, acc) => Cons(f(in), acc)
   }
-
 }
 
 object MappingInAction extends App {

@@ -16,26 +16,22 @@ object Functions {
 
   def uncurry[A,B,C](f: (A => B => C)): (A, B) => C = (a: A, b: B) => f(a)(b)
 
-
-
 }
 
 object PlayingWithFunctions extends App {
 
-
   def plus(a: Int, b: Int): Int = a + b
 
-  def double(a: Int): Int = Functions.partial(plus, 2)(a) // Partially applying plus
+  // Partially applying plus
+  def double(a: Int): Int = Functions.partial(plus, 2)(a)
 
-  def doubleThenAdd(toAdd: Int): Int => Int = a => Functions.partial(plus, toAdd).compose(double)(a)
-
+  def doubleThenAdd(toAdd: Int): Int => Int =
+    a => Functions.partial(plus, toAdd).compose(double)(a)
 
   println(plus(3, 4))
 
   println(double(4))
 
   println(doubleThenAdd(2)(3))
-
-
 
 }
